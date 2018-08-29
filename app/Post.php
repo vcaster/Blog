@@ -9,6 +9,11 @@ class Post extends Model
     //
     //protected $table = 'posts';
     //protected $fillable = ['title','body'];
+    public function author()
+    {
+      // code...
+      return $this->belongsTo(User::class);
+    }
     public function getImageUrlAttribute($value){
       $imageUrl='';
 
@@ -18,5 +23,15 @@ class Post extends Model
 
       }
       return $imageUrl;
+    }
+    public function getDateAttribute($value)
+    {
+        return $this->created_at->diffForhumans();
+    }
+
+    public function scopeLatestFirst()
+    {
+      // code...
+      return $this->orderBy('created_at','desc');
     }
 }
