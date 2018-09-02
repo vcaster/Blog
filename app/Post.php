@@ -15,6 +15,13 @@ class Post extends Model
       // code...
       return $this->belongsTo(User::class);
     }
+
+    public function category()
+    {
+      // code...
+      return $this->belongsTo(Category::class);
+    }
+
     public function getImageUrlAttribute($value){
       $imageUrl='';
 
