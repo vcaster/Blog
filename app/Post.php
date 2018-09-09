@@ -8,7 +8,7 @@ use GrahamCampbell\Markdown\Facades\Markdown;
 
 class Post extends Model
 {
-    //
+    protected $fillable = ['title', 'slug', 'body', 'excerpt', 'published_at', 'category_id'];
     protected $dates = ['published_at'];
     public function author()
     {
@@ -40,7 +40,10 @@ class Post extends Model
     {
       return $this->body ? Markdown::convertToHtml(e($this->body)) : NULL;
     }
-
+    public function getPublishedAtAttribute($value)
+    {
+      return $this->attributes['published_at'] = $value ?: NULL;
+    }
     public function getExcerptHtmlAttribute($value)
     {
       return $this->excerpt ? Markdown::convertToHtml(e($this->excerpt)) : NULL;
@@ -58,7 +61,8 @@ class Post extends Model
       if(! $this->published_at){
         return '<span class="label label-warning">Draft</span>';
       }
-      elseif( $this->published_at && $this->published_at->isFuture()){
+      //TODO -- isFuture fixed
+      elseif( $this->published_at && $this->published_at > Carbon::now()){
         return '<span class="label label-info">Schedule</span>';
       }
       else{
