@@ -34,3 +34,5 @@ Auth::routes();
 
 Route::get('/home', 'Backend\HomeController@index')->name('home');
 Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
+Route::resource('/backend/blog', 'Backend\BlogController');
+// Route::POST("/backend/blog/create", "Backend\BlogController@create")->name("backend.blog.create");
