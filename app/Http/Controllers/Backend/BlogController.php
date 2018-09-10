@@ -5,10 +5,18 @@ namespace App\Http\Controllers\Backend;
 use Illuminate\Http\Request;
 use App\Post;
 use App\Http\Requests;
+use Intervention\Image\Facades\Image;
 
 class BlogController extends BackendController
 {
     protected $limit = 5;
+    protected $uploadPath;
+
+    public function __construct()
+    {
+      parent::__construct();
+      $this->uploadPath = public_path(config('cms.image.directory'));
+    }
     /**
      * Display a listing of the resource.
      *
@@ -39,8 +47,36 @@ class BlogController extends BackendController
      */
     public function store(Requests\PostRequest $request)
     {
-      $request->user()->posts()->create($request->all());
+      $data = $this->handleRequest($request);
+      $request->user()->posts()->create($data);
       return redirect('/backend/blog')->with('message','Your post has been published successfully!');
+    }
+
+    private function handleRequest($request)
+    {
+      $data = $request->all();
+      if($request->hasFile('image'))
+      {
+        $image = $request->file('image');
+        $fileName = $image->getClientOriginalName();
+        $destination = $this->uploadPath;
+
+        $successUploaded = $image->move($destination, $fileName);
+
+        if ($successUploaded)
+        {
+          $width = config('cms.image.thumbnail.width');
+          $height = config('cms.image.thumbnail.height');
+          $extension =  $image->getClientOriginalExtension();
+          $thumbnail = str_replace(".{$extension}", "_thumb.{$extension}", $fileName);
+
+          Image::make($destination. '/' . $fileName)
+          ->resize($width,$height)
+          ->save($destination. '/' . $thumbnail);
+        }
+        $data['image'] = $fileName;
+      }
+      return $data;
     }
 
     /**

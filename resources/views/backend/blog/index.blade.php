@@ -64,7 +64,7 @@
                                 </td>
                                 <td>{{ $post->title }}</td>
                                 <td>{{ $post->author->name }}</td>
-                                <td>{{ $post->category->title }}</td>
+                                <td></td>
                                 <td>
                                     <abbr title="{{ $post->dateFormatted(true) }}">{{ $post->dateFormatted() }}</abbr> |
                                     {!! $post->publicationLabel() !!}
